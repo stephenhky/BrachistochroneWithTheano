@@ -18,7 +18,7 @@ def brachitochrone_functional():
                                         functional_lastterm,
                                         functional_ithterm(i)))
 
-    functional_parts = pfunc(iseq)
+    functional_parts = theano.map(fn=lambda k: pfunc(k), sequences=[iseq])
     functional = functional_parts.sum()
     gfunc = T.grad(functional, fseq)
 
