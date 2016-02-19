@@ -29,7 +29,7 @@ def brachistochrone_functional():
 
     return time_fcn, grad_time_fcn
 
-def brachistochrone_gradient_descent(lx, ly, N, learn_rate=0.1, tol=1e-7, max_iter=10000):
+def brachistochrone_gradient_descent(lx, ly, N, learn_rate=0.001, tol=1e-7, max_iter=10000):
     # get compiled function
     time_fcn, grad_time_fcn = brachistochrone_functional()
 
@@ -43,6 +43,8 @@ def brachistochrone_gradient_descent(lx, ly, N, learn_rate=0.1, tol=1e-7, max_it
     converged = False
     while step < max_iter and not converged:
         new_y = y - learn_rate * grad_time_fcn(y, lx, ly)
+        #print 'step = ', step
+        #print y
         converged = reduce(and_, np.abs(new_y-y)<tol)
         y = new_y
         step += 1
