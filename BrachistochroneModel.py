@@ -42,8 +42,6 @@ def brachistochrone_gradient_descent(lx, ly, N, learn_rate=0.001, tol=1e-7, max_
     converged = False
     while step < max_iter and not converged:
         new_y = y - learn_rate * grad_time_fcn(y, lx, ly)
-        #print 'step = ', step
-        #print y
         converged = reduce(and_, np.abs(new_y-y)<tol)
         y = new_y
         step += 1
