@@ -11,19 +11,15 @@ def brachistochrone_functional():
     delta_x = lx / N
     iseq = T.arange(N-1)
 
-    # derivatives array
-    dfseq, _ = theano.map(fn=lambda i: T.switch(T.eq(i, 0),
-                                                fseq[0]-ly,
-                                                fseq[i]-fseq[i-1]
-                                                ) / delta_x,
-                          sequences=[iseq])
-
     # functional term
-    functional_ithterm = lambda i: delta_x * T.sqrt(0.5*(1+(dfseq[i])**2)/(ly-fseq[i]))
+    functional_ithterm = lambda i: T.switch(T.eq(i, 0),
+                                            T.sqrt(0.5*(delta_x**2+(fseq[0]-ly)**2)/(ly-0.5*(fseq[0]+ly))),
+                                            T.sqrt(0.5*(delta_x**2+(fseq[i]-fseq[i-1])**2)/(ly-0.5*(fseq[i]+fseq[i-1])))
+                                            )
 
     # defining the functions
     functional_parts, _ = theano.map(fn=lambda k: functional_ithterm(k), sequences=[iseq])
-    functional = functional_parts.sum() + delta_x * T.sqrt(0.5*(1+((0-fseq[N-2])/delta_x)**2)/ly)
+    functional = functional_parts.sum() + T.sqrt(0.5*(delta_x**2+(0-fseq[N-2])**2)/(ly-0.5*(0+fseq[N-2])))
     gfunc = T.grad(functional, fseq)
 
     # compile the functions
@@ -32,7 +28,7 @@ def brachistochrone_functional():
 
     return time_fcn, grad_time_fcn
 
-def brachistochrone_gradient_descent(lx, ly, N, learn_rate=0.001, tol=1e-7, max_iter=10000):
+def brachistochrone_gradient_descent(lx, ly, N, learn_rate=0.001, tol=1e-7, max_iter=1e+7):
     # get compiled function
     time_fcn, grad_time_fcn = brachistochrone_functional()
 
@@ -52,4 +48,4 @@ def brachistochrone_gradient_descent(lx, ly, N, learn_rate=0.001, tol=1e-7, max_
         y = new_y
         step += 1
 
-    return x, y
+    return x, y, {'steps': step, 'converged': converged}
