@@ -46,4 +46,7 @@ def brachistochrone_gradient_descent(lx, ly, N, learn_rate=0.001, tol=1e-7, max_
         y = new_y
         step += 1
 
+    x = np.append(np.append(0, x), lx)
+    y = np.append(np.append(ly, y), 0)
+
     return x, y, {'steps': step, 'converged': converged}
