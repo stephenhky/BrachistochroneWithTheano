@@ -3,6 +3,9 @@ import theano.tensor as T
 import numpy as np
 from operator import and_
 
+# Note: this optimization does not work because of the divergence near x=0.
+# the term ~ q/sqrt(Ly-f(0))
+
 def brachistochrone_functional():
     # define all symbols
     lx, ly = T.dscalars('lx', 'ly')
